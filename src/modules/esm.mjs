@@ -1,16 +1,20 @@
-const path = require('path');
-const { release, version } = require('os');
-const { createServer: createServerHttp } = require('http');
-require('./files/c');
+import path from 'path';
+import { release, version } from 'os';
+import { createServer as createServerHttp } from 'http';
+import './files/c.js';
+import {fileURLToPath} from 'url';
+import {readFileSync} from 'fs';
 
+const fileName = fileURLToPath(import.meta.url);
+const dirName = path.dirname(fileName);
 const random = Math.random();
 
-let unknownObject;
+export let unknownObject;
 
 if (random > 0.5) {
-    unknownObject = require('./files/a.json');
+    unknownObject = readFileSync(path.join(dirName, 'files', 'a.json'));
 } else {
-    unknownObject = require('./files/b.json');
+    unknownObject = readFileSync(path.join(dirName, 'files', 'b.json'));
 }
 
 console.log(`Release ${release()}`);
@@ -20,7 +24,7 @@ console.log(`Path segment separator is "${path.sep}"`);
 console.log(`Path to current file is ${__filename}`);
 console.log(`Path to current directory is ${__dirname}`);
 
-const myServer = createServerHttp((_, res) => {
+export const myServer = createServerHttp((_, res) => {
     res.end('Request accepted');
 });
 
@@ -32,9 +36,4 @@ myServer.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
     console.log('To terminate it, use Ctrl+C combination');
 });
-
-module.exports = {
-    unknownObject,
-    myServer,
-};
 
